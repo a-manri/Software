@@ -14,6 +14,7 @@ class Template(object):
 		self.sub = rospy.Subscriber('/duckiebot/joy', Joy, self.callback)
 		self.pub = rospy.Publisher('/servo', UInt16MultiArray, queue_size=0)			
 		self.uint = UInt16MultiArray()
+		self.uint.data = [0, 0, 0, 180, 0]
 	
 	def callback(self,msg):
 		back = msg.buttons[6]; #posicion original
@@ -24,21 +25,27 @@ class Template(object):
 		Rsv = msg.axes[4]; #pitch
 		Rsh = msg.axes[3]; #yaw
 		d = 0.15 #delta error
+		rospy.loginfo(str(self.uint))
 		if y == 1 or x == 1:
-			rospy.loginfo("Garra")
-			self.uint.data[0] = self.uint.data[0] + 10*x - 10*y
+			if 0 <= self.uint.data[0] and self.uint.data[0] <= 180: 	
+				rospy.loginfo("Garra")
+				self.uint.data[0] = self.uint.data[0] + 10*x - 10*y
 		elif dUp == 1 or dDwn == 1:
-			rospy.loginfo("Muneca")
-			self.uint.data[1] = self.uint.data[1] + 10*dUp -10*dDwn
+			if 0 <= self.uint.data[1] and self.uint.data[1] <= 180: 
+				rospy.loginfo("Muneca")
+				self.uint.data[1] = self.uint.data[1] + 10*dUp -10*dDwn
 		elif d < Rsv or Rsv < -d:
-			rospy.loginfo("Pitch")
-			self.uint.data[2] = self.uint.data[2] + 5*Rsv
-			self.uint.data[3] = 180 - self.uint.data[2]
+			if 0 <= self.uint.data[2] and self.uint.data[2] <= 180: 
+				rospy.loginfo("Pitch")
+				self.uint.data[2] = self.uint.data[2] + 5*Rsv
+				self.uint.data[3] = 180 - self.uint.data[2]
 		elif d < Rsh or Rsh < -d:
-			rospy.loginfo("Yaw")
-			self.uint.data[4] = self.uint.data[4] + 5*Rsh
+			if 0 <= self.uint.data[4] and self.uint.data[4] <= 180:
+				rospy.loginfo("Yaw")
+				self.uint.data[4] = self.uint.data[4] + 5*Rsh
 		elif back == 1:
-			self.uint = '{data: [36, 72, 108, 144, 180]}' ###RECORDAR EDITAR POSICION INICIAL
+			rospy.loginfo("Reset")
+			self.uint.data = [36, 72, 108, 144, 180] ###RECORDAR EDITAR POSICION INICIAL
 		else:
 			rospy.loginfo("Quieto")
 
