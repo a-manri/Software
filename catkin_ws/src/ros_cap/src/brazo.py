@@ -30,22 +30,40 @@ class Template(object):
 			if 0 <= self.uint.data[0] and self.uint.data[0] <= 180: 	
 				rospy.loginfo("Garra")
 				self.uint.data[0] = self.uint.data[0] + 10*x - 10*y
+			if 0 >= self.uint.data[0]:
+				self.uint.data[0]=0
+			if 180 <= self.uint.data[0]:
+				self.uint.data[0]=180
 		elif dUp == 1 or dDwn == 1:
 			if 0 <= self.uint.data[1] and self.uint.data[1] <= 180: 
 				rospy.loginfo("Muneca")
 				self.uint.data[1] = self.uint.data[1] + 10*dUp -10*dDwn
+			if 0 >= self.uint.data[1]:
+				self.uint.data[1] = 0
+			if 180 <= self.uint.data[1]:
+				self.uint.data[1] = 180	
 		elif d < Rsv or Rsv < -d:
 			if 0 <= self.uint.data[2] and self.uint.data[2] <= 180: 
 				rospy.loginfo("Pitch")
 				self.uint.data[2] = self.uint.data[2] + 5*Rsv
 				self.uint.data[3] = 180 - self.uint.data[2]
+			if 0>= self.uint.data[2]:
+				self.uint.data[2]=0
+				self.uint.data[3]=180
+			if 180<= self.uint.data[2]:
+				self.uint.data[2]=180	
+				self.uint.data[3]=0
 		elif d < Rsh or Rsh < -d:
 			if 0 <= self.uint.data[4] and self.uint.data[4] <= 180:
 				rospy.loginfo("Yaw")
 				self.uint.data[4] = self.uint.data[4] + 5*Rsh
+			if 0 >= self.uint.data[4]:
+				self.uint.data[4]=0
+			if 180 <= self.uint.data[4]:
+				self.uint.data[4]=180
 		elif back == 1:
 			rospy.loginfo("Reset")
-			self.uint.data = [36, 72, 108, 144, 180] ###RECORDAR EDITAR POSICION INICIAL
+			self.uint.data = [36, 90, 108, 144, 180] ###RECORDAR EDITAR POSICION INICIAL
 		else:
 			rospy.loginfo("Quieto")
 
