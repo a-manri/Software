@@ -7,15 +7,6 @@ from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Point
 from duckietown_msgs.msg import Twist2DStamped
 
-back = msg.buttons[6]; #posición original
-y = msg.buttons[3]; #garra soltar
-x = msg.buttons[2]; #garra apretar
-dUp = msg.buttons[13]; #muñeca arriba
-dDwn = msg.buttons[14]; #muñeca abajo
-RSv = msg.axes[4]; #pitch
-RSh = msg.axes[3]; #yaw
-d = 0.15 #delta error
-
 class Template(object):
 	def __init__(self, args):
 		super(Template, self).__init__()
@@ -25,25 +16,34 @@ class Template(object):
 		self.uint = UInt16MultiArray()
 	
 	def callback(self,msg):
+		back = msg.buttons[6]; #posicion original
+		y = msg.buttons[3]; #garra soltar
+		x = msg.buttons[2]; #garra apretar
+		dUp = msg.buttons[13]; #muneca arriba
+		dDwn = msg.buttons[14]; #muneca abajo
+		Rsv = msg.axes[4]; #pitch
+		Rsh = msg.axes[3]; #yaw
+		d = 0.15 #delta error
 		if y == 1 or x == 1:
 			rospy.loginfo("Garra")
-			self.uint[0] = self.uint[0] + 10*x - 10*y
+			self.uint.data[0] = self.uint.data[0] + 10*x - 10*y
 		elif dUp == 1 or dDwn == 1:
-			rospy.loginfo("Muñeca")
-			self.uint[1] = self.uint[1] + 10*dUp -10*dDwn
+			rospy.loginfo("Muneca")
+			self.uint.data[1] = self.uint.data[1] + 10*dUp -10*dDwn
 		elif d < Rsv or Rsv < -d:
 			rospy.loginfo("Pitch")
-			self.uint[2] = self.uint[2] + 5*Rsv
-			self.uint[3] = 180 - self.uint[2]
+			self.uint.data[2] = self.uint.data[2] + 5*Rsv
+			self.uint.data[3] = 180 - self.uint.data[2]
 		elif d < Rsh or Rsh < -d:
 			rospy.loginfo("Yaw")
-			self.uint[4] = self.uint[4] + 5*Rsh
+			self.uint.data[4] = self.uint.data[4] + 5*Rsh
 		elif back == 1:
-			self.uint = {data: [36, 72, 108, 144, 180]} ###RECORDAR EDITAR POSICIÓN INICIAL
+			self.uint = '{data: [36, 72, 108, 144, 180]}' ###RECORDAR EDITAR POSICION INICIAL
 		else:
 			rospy.loginfo("Quieto")
 
 		self.pub.publish(self.uint)
+
 
 def main():
 	rospy.init_node('template') #creacion y registro del nodo!
