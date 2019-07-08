@@ -77,3 +77,8 @@ def main():
 
 if __name__ =='__main__':
 	main()
+
+#Comentarios:
+	#Los motores de la elevacion se pueden ajustar para que el brazo se mueva mayor distancia(ajustar grado 0 manualmente)
+	# Se pueden cambiar los motores pitch y hacer trabajar por separado(Botones separados)
+
