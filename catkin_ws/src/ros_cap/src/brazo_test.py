@@ -8,10 +8,10 @@ class Template(object):
 	def __init__(self, args):
 		super(Template, self).__init__()
 		self.args = args
-		self.sub = rospy.Subscriber('/duckiebot/joy', Joy, self.callback)
-		self.pub = rospy.Publisher('/servo', UInt16MultiArray, queue_size=0)			
-		self.uint = UInt16MultiArray()
-		self.uint.data = [0, 90, 0, 180, 0] #angulos posicion inicial
+		self.sub = rospy.Subscriber('/duckiebot/joy', Joy, self.callback) #establecer topico a suscribir
+		self.pub = rospy.Publisher('/servo', UInt16MultiArray, queue_size=0) #establecer topico a publicar
+		self.uint = UInt16MultiArray() #variable que contendrá los angulos
+		self.uint.data = [90, 90, 0, 180, 0] #angulos posicion inicial
 	
 	def callback(self,msg):
 		back = msg.buttons[6]; #volver a posicion inicial
@@ -25,15 +25,15 @@ class Template(object):
 
 		rospy.loginfo(str(self.uint)) #informacion sobre los angulos actuales
 		
-		#condiciones para movimiento (cambio de angulos)
+				#condiciones para movimiento (cambio de angulos)
 		if y == 1 or x == 1: #garra
 			if 0 <= self.uint.data[0] and self.uint.data[0] <= 180: 	
 				rospy.loginfo("Garra")
 				self.uint.data[0] = self.uint.data[0] + 10*x - 10*y
 			if 0 >= self.uint.data[0]:
-				self.uint.data[0]=0
+				self.uint.data[0] = 0
 			if 180 <= self.uint.data[0]:
-				self.uint.data[0]=180
+				self.uint.data[0] = 180
 
 		elif dUp == 1 or dDwn == 1: #muneca
 			if 0 <= self.uint.data[1] and self.uint.data[1] <= 180: 
@@ -43,29 +43,31 @@ class Template(object):
 				self.uint.data[1] = 0
 			if 180 <= self.uint.data[1]:
 				self.uint.data[1] = 180	
+
 		elif d < Rsv or Rsv < -d: #pitch
 			if 0 <= self.uint.data[2] and self.uint.data[2] <= 180: 
 				rospy.loginfo("Pitch")
 				self.uint.data[2] = self.uint.data[2] + 5*Rsv
 				self.uint.data[3] = 180 - self.uint.data[2]
-			if 0>= self.uint.data[2]:
-				self.uint.data[2]=0
-				self.uint.data[3]=180
-			if 180<= self.uint.data[2]:
-				self.uint.data[2]=180	
-				self.uint.data[3]=0
+			if 0 >= self.uint.data[2]:
+				self.uint.data[2] = 0
+				self.uint.data[3] = 180
+			if 180 <= self.uint.data[2]:
+				self.uint.data[2] = 180	
+				self.uint.data[3] = 0
+
 		elif d < Rsh or Rsh < -d: #yaw
 			if 0 <= self.uint.data[4] and self.uint.data[4] <= 180:
 				rospy.loginfo("Yaw")
 				self.uint.data[4] = self.uint.data[4] + 5*Rsh
 			if 0 >= self.uint.data[4]:
-				self.uint.data[4]=0
+				self.uint.data[4] = 0
 			if 180 <= self.uint.data[4]:
-				self.uint.data[4]=180
+				self.uint.data[4] = 180
 
 		elif back == 1: #volver a posicion inicial
 			rospy.loginfo("Reset")
-			self.uint.data = [0, 90, 0, 180, 0] ###RECORDAR EDITAR POSICION INICIAL
+			self.uint.data = [90, 90, 0, 180, 0]
 
 		else: #mantenerse quieto
 			rospy.loginfo("Quieto")
