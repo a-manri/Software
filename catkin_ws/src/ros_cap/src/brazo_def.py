@@ -11,7 +11,7 @@ class Template(object):
 		self.sub = rospy.Subscriber('/duckiebot/joy', Joy, self.callback)
 		self.pub = rospy.Publisher('/servo', UInt16MultiArray, queue_size=0)			
 		self.uint = UInt16MultiArray()
-		self.uint.data = [90, 90, 0, 180, 0] #angulos posicion inicial
+		self.uint.data = [90, 90, 0, 180, 90] #angulos posicion inicial
 	
 	def callback(self,msg):
 		back = msg.buttons[6]; #volver a posicion inicial
@@ -21,7 +21,7 @@ class Template(object):
 		dDwn = msg.buttons[14]; #muneca abajo
 		Rsv = msg.axes[4]; #pitch
 		Rsh = msg.axes[3]; #yaw
-		d = 0.15 #delta error
+		d = 0.25 #delta error
 		
 		#condiciones para movimiento (cambio de angulos)
 		if y == 1 or x == 1: #garra
@@ -63,7 +63,7 @@ class Template(object):
 
 		elif back == 1: #volver a posicion inicial
 			rospy.loginfo("Reset")
-			self.uint.data = [90, 90, 0, 180, 0]
+			self.uint.data = [90, 90, 0, 180, 90]
 
 		else: #mantenerse quieto
 			rospy.loginfo("Quieto")
