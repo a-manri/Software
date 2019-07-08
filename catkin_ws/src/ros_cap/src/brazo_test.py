@@ -22,6 +22,8 @@ class Template(object):
 		Rsv = msg.axes[4]; #pitch
 		Rsh = msg.axes[3]; #yaw
 		d = 0.15 #delta error
+
+		rospy.loginfo(str(self.uint)) #informacion sobre los angulos actuales
 		
 		#condiciones para movimiento (cambio de angulos)
 		if y == 1 or x == 1: #garra
